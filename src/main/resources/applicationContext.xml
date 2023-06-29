@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="no"
+       default-lazy-init="false"
+       default-init-method="init"
+       default-destroy-method="destroy">
+
+    <!--重复Bean定义（id相同），会采用最后一个-->
+    <!--引入其它配置文件-->
+
+    <import resource="pearBean.xml"></import>
+<!--singleton：线程安全问题-->
+<!--init-method、destroy-method    局部配置高于全局配置-->
+<!--singleton时 init-method、destroy-method 执行一次，prototype时，init-method每次创建时执行,destroy-method不执行，spring不负责对象的销毁-->
+<!--id name 不能重复，引入其它配置文件不受影响，按引入顺序取id相同的最后一个-->
+    <bean id="apple" name="apple2" class="com.susu.Bean.Apple" scope="singleton" init-method="init2" destroy-method="destroy2">
+    </bean>
+    <bean id="pear" class="com.susu.Bean.Pear" scope="singleton" name="Pear">
+    </bean>
+<!--（1）：构造注入参数：name匹配，类型匹配、index匹配、默认顺序匹配-->
+<!--** name匹配完成之后就不需要类型匹配与index匹配，类型匹配与index存在冲突，Spring会抛出异常-->
+<!--    <bean id="fruitBox" class="com.susu.Bean.FruitBox" scope="singleton">-->
+<!--        <constructor-arg >-->
+<!--            <ref bean="pear"></ref>-->
+<!--        </constructor-arg>-->
+<!--        <constructor-arg >-->
+<!--            <ref bean="apple"></ref>-->
+<!--        </constructor-arg>-->
+<!--        <constructor-arg name="par1"  value="par2" type="java.lang.String"></constructor-arg>-->
+<!--        <constructor-arg name="par2"  value="par1" type="java.lang.String"></constructor-arg>-->
+<!--    </bean>-->
+<!--（2）：set方法注入，必须提供set方法。-->
+<!--** 如果有某个成员必须要求有值，则获取对象时有可能set方法没有执行或注入的值不适合？？-->
+<!--解 （1）：配置错误（2）：其它注入方式干扰（->单例已被创建）（3）：单例：如果获取之前没有执行set方法，那么获取到的永远是第一次注入的-->
+    <bean id="fruitBox" class="com.susu.Bean.FruitBox" scope="singleton">
+        <property name="apple" ref="apple"></property>
+        <property name="pear" ref="pear"></property>
+    </bean>
+<!--（3）：P注入-->
+<!--（4）：SpEL注入-->
+<!---->
+
+
+
+
+</beans>
